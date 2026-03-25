@@ -14,7 +14,7 @@ import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
 
-from server.djangoapp.restapis import analyze_review_sentiments, get_request
+from .restapis import analyze_review_sentiments, get_request, post_review
 from .models import CarMake, CarModel
 
 from .populate import initiate
@@ -115,6 +115,9 @@ def get_dealer_reviews(request, dealer_id):
     if dealer_id:
         endpoint = "/fetchReviews/dealer/" + str(dealer_id)
         reviews = get_request(endpoint)
+        
+        if not reviews:  # add this guard
+            return JsonResponse({"status": 200, "reviews": []})
 
         for review_detail in reviews:
             # Call analyze_review_sentiments

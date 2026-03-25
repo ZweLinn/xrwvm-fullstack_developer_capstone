@@ -24,17 +24,19 @@ const Dealer = () => {
   let reviews_url = root_url+`djangoapp/reviews/dealer/${id}`;
   let post_review = root_url+`postreview/${id}`;
   
-  const get_dealer = async ()=>{
-    const res = await fetch(dealer_url, {
-      method: "GET"
-    });
-    const retobj = await res.json();
-    
-    if(retobj.status === 200) {
-      let dealerobjs = Array.from(retobj.dealer)
-      setDealer(dealerobjs[0])
+  const get_dealer = async () => {
+    try {
+      const res = await fetch(dealer_url, { method: "GET" });
+      const retobj = await res.json();
+      
+      if (retobj.status === 200 && retobj.dealer) {
+        // dealer is likely an array, take the first element
+        setDealer(Array.isArray(retobj.dealer) ? retobj.dealer[0] : retobj.dealer);
+      }
+    } catch (err) {
+      console.error("Error fetching dealer:", err);
     }
-  }
+  };
 
   const get_reviews = async ()=>{
     const res = await fetch(reviews_url, {
